@@ -327,8 +327,6 @@ public class Shell {
       - At least those written on the draft must be implemented.
   */
   private static void shape(String shapeName) {
-    grid.clear();
-
     Shell.Shape shape = shapeFromString(shapeName);
     if(shape == null) {
       System.out.println("Unrecognized shape name");
