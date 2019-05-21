@@ -290,6 +290,11 @@ public class Shell {
           System.out.println("Invalid coordinates");
           return true;
         }
+        // check if the given size is the same
+        if(params[0] == grid.getColumns() && params[1] == grid.getRows()){
+          System.out.println("Please enter a different size than the current game board.");
+          return true;
+        }
         grid.resize(params[0], params[1]);
         print();
         break;
