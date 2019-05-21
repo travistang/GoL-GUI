@@ -123,7 +123,6 @@ public class Shell {
       put(Shell.Shape.GLIDER, tuple(3,3));
       put(Shell.Shape.SPACESHIP, tuple(5,4));
       put(Shell.Shape.PULSAR, tuple(13,13));
-
     }
   };
 
@@ -204,6 +203,10 @@ public class Shell {
     if(grid == null) return;
     System.out.println(grid.toString());
   }
+  private static boolean isAddressValid(int col, int row) {
+    if(grid == null) return false;
+    return col >= 0 && col < grid.getColumns() && row >= 0 && row < grid.getRows();
+  }
   private static boolean parseCommand(String command) {
     String[] parts = command.split(" ");
     // prepare commands
@@ -254,12 +257,24 @@ public class Shell {
         return false; // should not continue;
 
       case "NEW":
+        if(params[0] <= 0 || params[1] <= 0) {
+          System.out.println("Invalid coordinates");
+          return true;
+        }
         grid = new GoLGrid(params[0], params[1]);
         break;
       case "ALIVE":
+        if(!isAddressValid(params[0], params[1])) {
+          System.out.println("Invalid address");
+          return true;
+        }
         grid.setAlive(params[0], params[1], true);
         break;
       case "DEAD":
+        if(!isAddressValid(params[0], params[1])) {
+          System.out.println("Invalid address");
+          return true;
+        }
         grid.setAlive(params[0], params[1], false);
         break;
       case "CLEAR":
@@ -269,7 +284,12 @@ public class Shell {
         break;
       case "PRINT":
         print();
+        break;
       case "RESIZE":
+        if(params[0] <= 0 || params[1] <= 0) {
+          System.out.println("Invalid coordinates");
+          return true;
+        }
         grid.resize(params[0], params[1]);
         print();
         break;
