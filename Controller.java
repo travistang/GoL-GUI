@@ -61,17 +61,39 @@ public class Controller {
     resizeCellWithDiemension(dim);
   }
 
-  public ActionListener cellClickListener(int col, int row, CellButton cellButton) {
-    return new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        // trigger the toggling
+  public MouseAdapter cellClickListener(int col, int row, CellButton cellButton) {
+    return new MouseAdapter() {
+      // helper for invoking listeners from the parent
+      public void propagateEvent(MouseEvent e) {
+        // dispatch events to higher level
+        Component component = (Component)e.getSource();
+        component.getParent().dispatchEvent(e);
+      }
+
+      @Override
+      public void mouseClicked(MouseEvent e) {
         boolean isCurrentlyAlive = grid.isAlive(col, row);
         grid.setAlive(col, row, !isCurrentlyAlive);
         // change the color
         Color color = Configuration.getCellColor(!isCurrentlyAlive);
 
         cellButton.setColor(color);
+      }
 
+      @Override
+      public void mousePressed(MouseEvent e) {
+        propagateEvent(e);
+      }
+
+      @Override
+      public void mouseDragged(MouseEvent e) {
+        System.out.println("mouse dragged");
+        propagateEvent(e);
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent e) {
+        propagateEvent(e);
       }
     };
   }

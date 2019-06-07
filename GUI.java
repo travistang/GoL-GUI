@@ -38,15 +38,13 @@ public class GUI {
     Container contentPane = frame.getContentPane();
 
     // make the grid having the ability to handle the dragging
-    GridDragManager manager = controller.getGridDragManager(this);
-    if(manager == null) {
-      System.out.println("manager is null!");
-    }
-    contentPane.addMouseListener(manager);
-    contentPane.addMouseMotionListener(manager);
+
 
     // init the grid panel
     golGridContainer = initGoLGrid(controller);
+    GridDragManager manager = controller.getGridDragManager(this);
+    golGridContainer.addMouseListener(manager);
+    golGridContainer.addMouseMotionListener(manager);
     contentPane.add(golGridContainer, BorderLayout.CENTER);
 
 
@@ -132,7 +130,7 @@ public class GUI {
     Color color = Configuration.getCellColor(isAlive); // get the color of a dead cell
 
     cellButton.setColor(color);
-    cellButton.addActionListener(controller.cellClickListener(col, row, cellButton));
+    cellButton.addMouseListener(controller.cellClickListener(col, row, cellButton));
     return cellButton;
   }
   /**********************
