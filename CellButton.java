@@ -21,6 +21,9 @@ public class CellButton extends JButton {
   };
 
   public void setColor(Color color) {
+    if(this.color.getRGB() == color.getRGB()) {
+      return; // do not repaint if it is not updated
+    }
    this.color = color;
    this.revalidate();
    this.repaint();

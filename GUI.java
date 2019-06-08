@@ -174,7 +174,6 @@ public class GUI {
   public void reloadGridCells(int col, int row) {
     if(col == this.col && row == this.row) {
       // just repaint, don't reload
-      System.out.println("reload cells");
       repaintCells();
       return;
     }

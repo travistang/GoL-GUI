@@ -96,7 +96,6 @@ public class Controller {
       @Override
       public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
-          System.out.println("Mouse released");
           gridDragManager.stopTracking();
         }
       }
