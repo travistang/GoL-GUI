@@ -64,11 +64,11 @@ public class Controller {
   public MouseAdapter cellClickListener(int col, int row, CellButton cellButton) {
     return new MouseAdapter() {
       // helper for invoking listeners from the parent
-      public void propagateEvent(MouseEvent e) {
-        // dispatch events to higher level
-        Component component = (Component)e.getSource();
-        component.getParent().dispatchEvent(e);
-      }
+      // public void propagateEvent(MouseEvent e) {
+      //   // dispatch events to higher level
+      //   Component component = (Component)e.getSource();
+      //   component.getParent().dispatchEvent(e);
+      // }
 
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -82,18 +82,23 @@ public class Controller {
 
       @Override
       public void mousePressed(MouseEvent e) {
-        propagateEvent(e);
+        if (e.getButton() == MouseEvent.BUTTON1) {
+          gridDragManager.startTracking(grid.isAlive(col, row));
+        }
+
       }
 
       @Override
-      public void mouseDragged(MouseEvent e) {
-        System.out.println("mouse dragged");
-        propagateEvent(e);
+      public void mouseEntered(MouseEvent e) {
+        gridDragManager.reportMouseOver(col, row);
       }
 
       @Override
       public void mouseReleased(MouseEvent e) {
-        propagateEvent(e);
+        if (e.getButton() == MouseEvent.BUTTON1) {
+          System.out.println("Mouse released");
+          gridDragManager.stopTracking();
+        }
       }
     };
   }

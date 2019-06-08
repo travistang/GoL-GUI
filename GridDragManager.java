@@ -9,7 +9,7 @@ import java.awt.event.*;
 // class for the pane-dragging functionality
 public class GridDragManager extends MouseInputAdapter {
 
-  Boolean shouldCellUnderDragBeAlive = null;
+  volatile Boolean shouldCellUnderDragBeAlive = null;
   Controller controller;
   GUI gui;
 
@@ -71,4 +71,19 @@ public class GridDragManager extends MouseInputAdapter {
     controller.refreshGridDimension();
   }
 
+  public void startTracking(boolean alive) {
+    shouldCellUnderDragBeAlive = alive;
+  }
+
+  public void stopTracking() {
+    shouldCellUnderDragBeAlive = null;
+  }
+
+  // method for the cellButton to report themselves being hovered by the mouse.
+  public void reportMouseOver(int col, int row) {
+    if(shouldCellUnderDragBeAlive != null) {
+      controller.setAlive(col, row, shouldCellUnderDragBeAlive);
+      controller.refreshGridDimension();
+    }
+  }
 }

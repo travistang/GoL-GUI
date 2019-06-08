@@ -4,6 +4,8 @@ package gameoflife;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.awt.event.*;
+
 import javax.management.RuntimeErrorException;
 import java.lang.Error;
 import java.util.ArrayList;
@@ -21,7 +23,11 @@ public class GUI {
   JButton simulationButton;
   JButton nextButton;
 
+  ArrayList<ArrayList<CellButton> > cellButtons = new ArrayList<>();
+
   JComboBox<GoLGrid.Shape> shapeDropdownBox;
+  int col = 0;
+  int row = 0;
 
   public GUI(Controller controller) {
     this.controller = controller;
@@ -130,7 +136,9 @@ public class GUI {
     Color color = Configuration.getCellColor(isAlive); // get the color of a dead cell
 
     cellButton.setColor(color);
-    cellButton.addMouseListener(controller.cellClickListener(col, row, cellButton));
+    MouseAdapter listener = controller.cellClickListener(col, row, cellButton);
+    cellButton.addMouseListener(listener);
+    cellButton.addMouseMotionListener(listener);
     return cellButton;
   }
   /**********************
@@ -147,24 +155,51 @@ public class GUI {
   public Dimension getGolGridDimension() {
     return golGridContainer.getSize();
   }
+  // when the grid does not move and you want to update the cell...
+  public void repaintCells() {
+    synchronized(this) {
+      for(int i = 0; i < row; i++) {
+        for(int j = 0; j < col; j++) {
+          CellButton cellButton = cellButtons.get(i).get(j);
+          cellButton.setColor(
+            Configuration.getCellColor(
+              controller.isAlive(j, i)
+            )
+          );
+        }
+      }
+    }
+  }
   // methods that triggers reloading of the grids
   public void reloadGridCells(int col, int row) {
+    if(col == this.col && row == this.row) {
+      // just repaint, don't reload
+      System.out.println("reload cells");
+      repaintCells();
+      return;
+    }
+
+    this.col = col;
+    this.row = row;
     // golGridContainer = initGoLGrid();
     // frame.getContentPane().add(golGridContainer, BorderLayout.CENTER);
-    golGridContainer.removeAll();
-    ArrayList<ArrayList<CellButton> > buttons = new ArrayList<>();
+    synchronized(this) {
+      golGridContainer.removeAll();
+      cellButtons.clear();
 
-    for (int i = 0; i < row; i++){
-      ArrayList<CellButton> buttonRow = new ArrayList<>();
-      for (int j = 0; j < col; j++) {
-        CellButton cellButton = getCellButton(j, i);
-        cellButton.setCoordinate(j, i);
-        golGridContainer.add(cellButton);
+      for (int i = 0; i < row; i++){
+        ArrayList<CellButton> buttonRow = new ArrayList<>();
+        for (int j = 0; j < col; j++) {
+          CellButton cellButton = getCellButton(j, i);
+          cellButton.setCoordinate(j, i);
+          golGridContainer.add(cellButton);
 
-        buttonRow.add(cellButton);
+          buttonRow.add(cellButton);
+        }
+        cellButtons.add(buttonRow);
       }
-      buttons.add(buttonRow);
     }
+
 
     golGridContainer.revalidate();
     golGridContainer.repaint();
